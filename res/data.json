@@ -1,0 +1,37 @@
+{
+    "scorelist": [ {
+    "game": "galaga",
+    "scores": [{
+        "player": "Pete Meers",
+        "score": "5000",
+        "date": "06/06/2022"
+    },
+    {
+        "player": "Leanna",
+        "score": "4000",
+        "date": "06/06/2022"
+    },
+    {
+        "player": "Serhat",
+        "score": "3000",
+        "date": "06/06/2022"
+    }]
+    }, {
+    "game": "wiping",
+    "scores": [{
+        "player": "Dylan Fawkes",
+        "score": "12000",
+        "date" : "29/05/2022"
+    },
+    {
+        "player": "Earle",
+        "score": "11000",
+        "date" : "01/06/2022"
+    },
+    {
+        "player": "Serhat",
+        "score": "9999",
+        "date": "02/06/2022"
+    }]
+    }]
+}
