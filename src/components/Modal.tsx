@@ -1,11 +1,9 @@
 import { useState } from 'react'
 import { Dialog } from '@headlessui/react'
 
-function Modal() {
-  let [isOpen, setIsOpen] = useState(true)
-
+function Modal({open, setOpen}: {open: boolean; setOpen: any}) {
   return (
-    <Dialog open={isOpen} onClose={() => setIsOpen(false)}>
+    <Dialog open={open} onClose={() => {setOpen(false)}}>
       <Dialog.Panel>
         <Dialog.Title>Deactivate account</Dialog.Title>
         <Dialog.Description>
@@ -17,8 +15,8 @@ function Modal() {
           will be permanently removed. This action cannot be undone.
         </p>
 
-        <button onClick={() => setIsOpen(false)}>Deactivate</button>
-        <button onClick={() => setIsOpen(false)}>Cancel</button>
+        <button onClick={() => {setOpen(false)}}>Deactivate</button>
+        <button onClick={() => {setOpen(false)}}>Cancel</button>
       </Dialog.Panel>
     </Dialog>
   )

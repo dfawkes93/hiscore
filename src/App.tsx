@@ -1,54 +1,45 @@
-import { useState } from 'react'
-import Modal from './components/Modal'
-import ScoreTable from './ScoreTable'
-import logo from './logo.svg'
-import './App.css'
-import * as baseData from "../res/data.json"
+import { useState } from "react";
+import Modal from "./components/Modal";
+import ScoreTable from "./ScoreTable";
+import logo from "./logo.svg";
+import "./App.css";
+import * as baseData from "../res/data.json";
 
 function App() {
-  if (!localStorage.getItem('data')) {
-	localStorage.setItem('data', JSON.stringify(baseData));
+  if (!localStorage.getItem("data")) {
+    localStorage.setItem("data", JSON.stringify(baseData));
   }
-  const data = JSON.parse(localStorage.getItem('data') ?? '{}'); 
-  const [count, setCount] = useState(0)
-  //const data = JSON.parse(rawdata);
-  const newScore = () => {
-	console.log("New score!")
-	data.scorelist[0].scores.push({
-		"player": "someguy",
-		"score": Math.floor(Math.random()*10000).toString(),
-		"date": "07/06/2022"
-	})
-	localStorage.setItem('data', JSON.stringify(data));
+  const data = JSON.parse(localStorage.getItem("data") ?? "{}");
+  const [openModal, setOpenModal] = useState(false)
+  const handleModal = (show: boolean) => {
+      setOpenModal(show);
   }
   return (
-    <div className="App">
+    <div className="App dark:bg-slate-800 dark:text-slate-300">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-		<h1>21CS High Scores</h1>
+        <h1>21CS High Scores</h1>
       </header>
-		<div className="grid grid-cols-3 gap-8">
-		{ScoreTable(data.scorelist[1])}
-		{ScoreTable(data.scorelist[0])}
-		</div>
-        <p>
-		  <button 
-			className="bg-violet-700"
-			onClick={newScore}>
-			Post new score
-		  </button>
-          {' | '}
-          <a
-            className="App-link"
-            href="https://vitejs.dev/guide/features.html"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Vite Docs
-          </a>
-        </p>
+      <div className="container mx-auto px-4">
+        <div className="grid grid-flow-row grid-cols-2 gap-4 justify-evenly justify-items-center">
+          {ScoreTable(data.scorelist[1])}
+          {ScoreTable(data.scorelist[0])}
+        </div>
+      </div>
+      <p>
+        {" | "}
+        <a
+          className="App-link"
+          href="https://vitejs.dev/guide/features.html"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Vite Docs
+        </a>
+      </p>
+      <Modal open={openModal} setOpen={handleModal}/>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
