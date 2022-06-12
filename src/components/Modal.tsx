@@ -3,20 +3,20 @@ import { Dialog } from '@headlessui/react'
 
 function Modal({open, setOpen}: {open: boolean; setOpen: any}) {
   return (
-    <Dialog open={open} onClose={() => {setOpen(false)}}>
+    <Dialog open={open} onClose={() => {setOpen(false)}}
+        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 border-2 border-indigo-800">
       <Dialog.Panel>
-        <Dialog.Title>Deactivate account</Dialog.Title>
+        <Dialog.Title>Do Modal Stuff</Dialog.Title>
         <Dialog.Description>
-          This will permanently deactivate your account
+          This modal will let you do modal things
         </Dialog.Description>
 
         <p>
-          Are you sure you want to deactivate your account? All of your data
-          will be permanently removed. This action cannot be undone.
+          Lorem ipsum blah how cool are modals tho
         </p>
 
-        <button onClick={() => {setOpen(false)}}>Deactivate</button>
-        <button onClick={() => {setOpen(false)}}>Cancel</button>
+        <button onClick={() => {setOpen(false)}}>Do a thing</button>
+        <button onClick={() => {setOpen(false)}}>Woah hold up</button>
       </Dialog.Panel>
     </Dialog>
   )

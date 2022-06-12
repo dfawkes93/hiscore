@@ -1,4 +1,7 @@
-function ScoreTable(gameData: any) {
+function ScoreTable(
+    {showModal, updateData, gameData}: {
+     showModal: boolean; updateData: any; scores: any
+     }) {
   const bodyData: any[] = [];
   const newScore = () => {
     console.log("New score!");
@@ -31,7 +34,7 @@ function ScoreTable(gameData: any) {
         </thead>
         <tbody>{bodyData}</tbody>
       </table>
-      <button className="bg-violet-700 px-2 font-bold mt-2 rounded-lg" onClick={newScore}>
+      <button className="bg-violet-700 px-2 font-bold mt-2 rounded-lg" onClick={() => {showModal(true)}}>
         Post new score
       </button>
     </div>

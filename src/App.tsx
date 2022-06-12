@@ -22,21 +22,10 @@ function App() {
       </header>
       <div className="container mx-auto px-4">
         <div className="grid grid-flow-row grid-cols-2 gap-4 justify-evenly justify-items-center">
-          {ScoreTable(data.scorelist[1])}
-          {ScoreTable(data.scorelist[0])}
+          <ScoreTable showModal={handleModal} gameData={data.scorelist[1]}/>
+          <ScoreTable showModal={handleModal} gameData={data.scorelist[0]}/>
         </div>
       </div>
-      <p>
-        {" | "}
-        <a
-          className="App-link"
-          href="https://vitejs.dev/guide/features.html"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Vite Docs
-        </a>
-      </p>
       <Modal open={openModal} setOpen={handleModal}/>
     </div>
   );
