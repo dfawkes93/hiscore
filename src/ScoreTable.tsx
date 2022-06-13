@@ -1,6 +1,6 @@
 function ScoreTable(
     {showModal, updateData, gameData}: {
-     showModal: boolean; updateData: any; scores: any
+     showModal: any; updateData: any; gameData: any
      }) {
   const bodyData: any[] = [];
   const newScore = () => {
