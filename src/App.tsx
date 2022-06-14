@@ -4,6 +4,7 @@ import ScoreTable from "./ScoreTable";
 import logo from "./logo.svg";
 import "./App.css";
 import * as baseData from "../res/data.json";
+import { getUsers } from "./database";
 
 function App() {
   if (!localStorage.getItem("data")) {
