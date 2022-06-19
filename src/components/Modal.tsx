@@ -18,7 +18,7 @@ function Modal({
     {
       switch (modalContent) {
         case DataTypes.User:
-          return <UserForm handleSubmit={submitHandler} />;
+          return <UserForm handleSubmit={submitHandler} setOpen={setOpen} />;
         case DataTypes.Score:
           break;
         case DataTypes.Game:
@@ -33,31 +33,12 @@ function Modal({
       onClose={() => {
         setOpen(false);
       }}
-      className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 border-2 border-indigo-800"
+      className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 "
     >
-      <Dialog.Panel className="bg-slate-300">
-        <Dialog.Title>Do Modal Stuff</Dialog.Title>
-        <Dialog.Description>
-          This modal will let you do modal things
-        </Dialog.Description>
-
+      <Dialog.Panel
+        className="bg-indigo-100 p-2 rounded-lg border-2 border-indigo-800"
+      >
         {generateContent(modalContent)}
-        <p>Lorem ipsum blah how cool are modals tho</p>
-
-        <button
-          onClick={() => {
-            setOpen(false);
-          }}
-        >
-          Do a thing
-        </button>
-        <button
-          onClick={() => {
-            setOpen(false);
-          }}
-        >
-          Woah hold up
-        </button>
       </Dialog.Panel>
     </Dialog>
   );

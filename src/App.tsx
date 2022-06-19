@@ -8,10 +8,6 @@ import { User, Score, Game, DataTypes } from "./Models";
 import { getUsers, getGames, addUser } from "./database";
 
 function App() {
-  if (!localStorage.getItem("data")) {
-    localStorage.setItem("data", JSON.stringify(baseData));
-  }
-  const dato = JSON.parse(localStorage.getItem("data") ?? "{}");
   const [openModal, setOpenModal] = useState(false);
   const [modalContent, setModalContent] = useState(DataTypes.Score);
   const [games, setGames] = useState([{ ID: 0, name: "" }]);
@@ -24,6 +20,7 @@ function App() {
       setModalContent(content);
     }
   };
+
   const submitHandler = (
     type: DataTypes,
     value: User | Score | Game
@@ -48,7 +45,8 @@ function App() {
     }
   }
 
-  const loadonce = useEffect(() => {
+  //Load initial game list
+  useEffect(() => {
     getGames().then((res) => {
       setGames(res);
     });
