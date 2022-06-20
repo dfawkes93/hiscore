@@ -1,8 +1,9 @@
 import { Score, User, Game } from "./Models";
-const PORT = 8282;
+import config from "../res/data.js";
+const PORT = config.PORT || 2424;
 
 const headers = {
-  "Accept": "application/json",
+  Accept: "application/json",
   "Content-Type": "application/json",
 };
 
@@ -37,6 +38,23 @@ export async function getGames() {
   }).then((response) => response.json())) as Game[];
 }
 
+export async function addGame(game: Partial<Game>) {
+  let endpoint = "/api/games";
+  if (game.name === undefined) {
+    return Promise.reject({ message: "Incomplete request" });
+  }
+  return await fetch(`http://localhost:${PORT}${endpoint}`, {
+    headers: headers,
+    method: "POST",
+    body: JSON.stringify(game),
+  }).then((response) => {
+    if (response.status === 400) {
+      return Promise.reject({ message: "Duplicate entry" });
+    }
+    return response.json();
+  });
+}
+
 export async function getGameScores(game: Partial<Game>) {
   let endpoint = "/api/scores";
   return (await fetch(
@@ -44,4 +62,18 @@ export async function getGameScores(game: Partial<Game>) {
       new URLSearchParams({ game: (game?.ID || 1).toString() }),
     { headers: headers }
   ).then((response) => response.json())) as Score[];
+}
+
+export async function addScore(score: Partial<Score>) {
+  let endpoint = "/api/scores";
+  return await fetch(`http://localhost:${PORT}${endpoint}`, {
+    headers: headers,
+    method: "POST",
+    body: JSON.stringify({ score: score.score, game: score.gameId, player: score.playerId }),
+  }).then((response) => {
+    if (response.status === 400) {
+      return Promise.reject({ message: "Unable to add score" });
+    }
+    return response.json();
+  });
 }

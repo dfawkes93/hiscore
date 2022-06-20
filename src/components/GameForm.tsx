@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Dialog } from "@headlessui/react";
 import { DataTypes } from "../Models";
 
-function UserForm({
+function GameForm({
   handleSubmit,
   setOpen,
 }: {
@@ -16,21 +16,19 @@ function UserForm({
   }
   const doSubmit = (e: any) => {
     e.preventDefault();
-    handleSubmit(DataTypes.User, formData)
+    handleSubmit(DataTypes.Game, formData)
     .then(() => setOpen(false), (e: string) => setErr(e))
     .catch((e: string) => {setErr(e)});
   };
   const [err, setErr] = useState("");
   const [formData, setFormData] = useState({
     name: "",
-    short: "",
-    email: "",
   });
   return (
     <div>
-      <Dialog.Title className="pl-2 font-bold text-lg">Add User</Dialog.Title>
+      <Dialog.Title className="pl-2 font-bold text-lg">Add Game</Dialog.Title>
       <Dialog.Description className="break-normal py-1">
-        No registration required. Just add your real and arcade name
+        Add a new game
       </Dialog.Description>
       <form
         onSubmit={doSubmit}
@@ -46,31 +44,6 @@ function UserForm({
             required={true}
             className="p-1 outline outline-1 outline-stone-400 rounded-md valid:outline-green-500"
           /> </label>
-        <label className="my-1">
-          <span className="block">Arcade Name:</span>
-          <input
-            name="short"
-            type="text"
-            value={formData.short}
-            onChange={handleChange}
-            placeholder="AAA"
-            required={true}
-            maxLength={3}
-            pattern={"[A-Z]{3}"}
-            className="p-1 outline outline-1 outline-stone-400 rounded-md invalid:outline-red-400 valid:outline-green-500"
-          />
-        </label>
-        <label className="my-1">
-          <span className="block">Email (optional):</span>
-          <input
-            name="email"
-            type="text"
-            placeholder="your@email.com"
-            value={formData.email}
-            onChange={handleChange}
-            className="p-1 outline outline-1 outline-stone-400 rounded-md"
-          />
-        </label>
         <div
           id="buttonBar"
           className="inline pt-2 dark:text-stone-100 font-bold"
@@ -87,7 +60,7 @@ function UserForm({
             type="submit"
             className="mx-3 px-2 py-1 bg-violet-700 rounded-lg"
           >
-            Add New User
+            Add New Game
           </button>
         </div>
         <div className={"text-red-600 "+ (!!err ? "" : "display-none")}>{err}</div>
@@ -96,4 +69,4 @@ function UserForm({
   );
 }
 
-export default UserForm;
+export default GameForm;

@@ -1,72 +1,85 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Dialog } from "@headlessui/react";
 import { DataTypes } from "../Models";
 
-function UserForm({
+function ScoreForm({
   handleSubmit,
   setOpen,
+  data,
 }: {
   handleSubmit: any;
   setOpen: any;
+  data?: any;
 }) {
   function handleChange(event: any) {
     const value = event.target.value as string;
-    const name = event.target.name as "name" | "short" | "email";
+    const name = event.target.name as "player" | "game" | "score";
     setFormData({ ...formData, [name]: value });
   }
   const doSubmit = (e: any) => {
     e.preventDefault();
-    handleSubmit(DataTypes.User, formData)
-    .then(() => setOpen(false), (e: string) => setErr(e))
-    .catch((e: string) => {setErr(e)});
+    handleSubmit(DataTypes.Score, formData)
+      .then(
+        () => setOpen(false),
+        (e: string) => setErr(e)
+      )
+      .catch((e: string) => {
+        setErr(e);
+      });
   };
   const [err, setErr] = useState("");
   const [formData, setFormData] = useState({
-    name: "",
-    short: "",
-    email: "",
+    player: "",
+    game: data?.game || "",
+    score: data?.score || "",
   });
+
+  useEffect(() => {
+    if (data?.game !== undefined) {
+      setFormData({ ...formData, game: data.game });
+    }
+    if (data?.player !== undefined) {
+      setFormData({ ...formData, player: data.player });
+    }
+  }, [data]);
   return (
     <div>
-      <Dialog.Title className="pl-2 font-bold text-lg">Add User</Dialog.Title>
-      <Dialog.Description className="break-normal py-1">
-        No registration required. Just add your real and arcade name
-      </Dialog.Description>
+      <Dialog.Title className="pl-2 font-bold text-lg">Add Score</Dialog.Title>
       <form
         onSubmit={doSubmit}
         className="grid grid-cols-1 justify-items-center outline-offset-1"
       >
         <label className="my-1">
-          <span className="block">Name:</span>
+          <span className="block">Player:</span>
           <input
-            name="name" type="text"
+            name="player"
+            type="text"
             placeholder="Wonder Boy"
-            value={formData.name}
+            value={formData.player}
             onChange={handleChange}
             required={true}
             className="p-1 outline outline-1 outline-stone-400 rounded-md valid:outline-green-500"
-          /> </label>
+          />{" "}
+        </label>
         <label className="my-1">
-          <span className="block">Arcade Name:</span>
+          <span className="block">Game:</span>
           <input
-            name="short"
+            name="game"
             type="text"
-            value={formData.short}
+            value={formData.game}
             onChange={handleChange}
-            placeholder="AAA"
             required={true}
-            maxLength={3}
-            pattern={"[A-Z]{3}"}
             className="p-1 outline outline-1 outline-stone-400 rounded-md invalid:outline-red-400 valid:outline-green-500"
           />
         </label>
         <label className="my-1">
-          <span className="block">Email (optional):</span>
+          <span className="block">Score:</span>
           <input
-            name="email"
+            name="score"
             type="text"
-            placeholder="your@email.com"
-            value={formData.email}
+            value={formData.score}
+            pattern={"[0-9]+"}
+            required={true}
             onChange={handleChange}
             className="p-1 outline outline-1 outline-stone-400 rounded-md"
           />
@@ -87,13 +100,15 @@ function UserForm({
             type="submit"
             className="mx-3 px-2 py-1 bg-violet-700 rounded-lg"
           >
-            Add New User
+            Add New Score
           </button>
         </div>
-        <div className={"text-red-600 "+ (!!err ? "" : "display-none")}>{err}</div>
+        <div className={"text-red-600 " + (!!err ? "" : "display-none")}>
+          {err}
+        </div>
       </form>
     </div>
   );
 }
 
-export default UserForm;
+export default ScoreForm;

@@ -1,32 +1,51 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { Dialog } from "@headlessui/react";
-import UserForm from "./UserForm";
 import { DataTypes } from "../Models";
+import UserForm from "./UserForm";
+import GameForm from "./GameForm";
+import ScoreForm from "./ScoreForm";
 
 function Modal({
   open,
   setOpen,
+  modalType,
   modalContent,
   submitHandler,
 }: {
   open: boolean;
   setOpen: any;
-  modalContent: DataTypes;
+  modalType: DataTypes;
+  modalContent?: any;
   submitHandler: any;
 }) {
-  const generateContent = (modalContent: DataTypes) => {
+
+
+  //const [content, setContent] = useState({game:"",user:""});
+
+  const generateType = (modalContent?: any) => {
     {
-      switch (modalContent) {
+      if (modalType === undefined) {
+          return <p>{modalContent}</p>
+      }
+      switch (modalType) {
         case DataTypes.User:
-          return <UserForm handleSubmit={submitHandler} setOpen={setOpen} />;
+          return <UserForm handleSubmit={submitHandler} setOpen={setOpen}/>;
         case DataTypes.Score:
-          break;
+          return <ScoreForm handleSubmit={submitHandler} setOpen={setOpen} data={modalContent}/>;
         case DataTypes.Game:
-          break;
+          return <GameForm handleSubmit={submitHandler} setOpen={setOpen}/>;
+        default:
+          return <div/>
       }
     }
-    return <p></p>;
   };
+
+  const [type, setType] = useState(generateType());
+
+  useEffect(() => {
+      setType(generateType(modalContent));
+  }, [modalType, modalContent]);
+
   return (
     <Dialog
       open={open}
@@ -38,7 +57,7 @@ function Modal({
       <Dialog.Panel
         className="bg-indigo-100 p-2 rounded-lg border-2 border-indigo-800"
       >
-        {generateContent(modalContent)}
+        {type}
       </Dialog.Panel>
     </Dialog>
   );

@@ -19,7 +19,9 @@ export interface User {
 export interface Score {
     score: number,
     player: string,
+    playerId?: number,
     short: string,
     game: string,
+    gameId?: number,
     date: string
 }

@@ -79,7 +79,12 @@ function createRouter(db) {
   router.post("/api/games", (req, res) => {
     const { name } = req.body;
     const stmt = db.prepare("INSERT INTO GAMES " + "(name)  VALUES (?)");
-    return res.json(stmt.run(name));
+    try {
+      ret = stmt.run(name);
+      res.json(ret);
+    } catch (e) {
+      res.status(400).json({ Error: e.code });
+    }
   });
 
   // List users
