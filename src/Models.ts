@@ -6,14 +6,17 @@ export enum DataTypes {
 
 export interface Game {
     ID: number,
-    name: string
+    name: string,
+    scores: number,
+    players: number,
+    lastUpdated: string
 }
 
 export interface User {
     ID: number,
     name: string,
     short: string,
-    email: string
+    email?: string
 }
 
 export interface Score {

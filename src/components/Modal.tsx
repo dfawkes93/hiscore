@@ -22,7 +22,7 @@ function Modal({
 
   //const [content, setContent] = useState({game:"",user:""});
 
-  const generateType = (modalContent?: any) => {
+  const generateType = (modalType: DataTypes, submitHandler: any, setOpen: any, modalContent?: any) => {
     {
       if (modalType === undefined) {
           return <p>{modalContent}</p>
@@ -40,11 +40,11 @@ function Modal({
     }
   };
 
-  const [type, setType] = useState(generateType());
+  //const [type, setType] = useState(generateType());
 
-  useEffect(() => {
-      setType(generateType(modalContent));
-  }, [modalType, modalContent]);
+  //useEffect(() => {
+   //   setType(generateType(modalContent));
+  //}, [modalType, modalContent]);
 
   return (
     <Dialog
@@ -57,7 +57,7 @@ function Modal({
       <Dialog.Panel
         className="bg-indigo-100 p-2 rounded-lg border-2 border-indigo-800"
       >
-        {type}
+        {generateType(modalType, submitHandler, setOpen, modalContent)}
       </Dialog.Panel>
     </Dialog>
   );

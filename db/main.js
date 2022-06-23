@@ -65,7 +65,15 @@ function createRouter(db) {
 
   // List games
   router.get("/api/games", (req, res) => {
-    const stmt = db.prepare("SELECT * FROM GAMES");
+    const stmt = db.prepare(
+      'SELECT GAMES.ID, GAMES.name, COUNT(SCORES.ID) as "scores", ' +
+        'COUNT(DISTINCT USERS.NAME) as "players", ' +
+        'MAX(SCORES.date) as "lastUpdated" FROM GAMES ' +
+        "LEFT JOIN SCORES ON GAMES.ID == SCORES.game " +
+        "LEFT JOIN USERS ON USERS.ID == SCORES.player " +
+        "GROUP BY GAMES.name " +
+        "ORDER BY GAMES.ID "
+    );
     return res.json(stmt.all());
   });
   router.get("/api/games/:id", (req, res) => {

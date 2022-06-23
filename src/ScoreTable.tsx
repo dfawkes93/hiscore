@@ -43,7 +43,7 @@ function ScoreTable({ handleModal, game }: { handleModal: any; game: Game }) {
           </tr>
         </thead>
         <tbody className="bg-zinc-100 text-indigo-900">
-          {scores.map((score) => {
+          {scores.slice(0,5).map((score) => {
             return (
               <tr key={scores.indexOf(score)}>
                 <td className="px-2 text-left">

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Dialog } from "@headlessui/react";
-import { DataTypes } from "../Models";
+import { DataTypes, User } from "../Models";
+import { UserCombo } from "./UserCombo";
 
 function ScoreForm({
   handleSubmit,
@@ -11,11 +12,18 @@ function ScoreForm({
   setOpen: any;
   data?: any;
 }) {
-  function handleChange(event: any) {
+  const handleChange = (event: any) => {
     const value = event.target.value as string;
     const name = event.target.name as "player" | "game" | "score";
     setFormData({ ...formData, [name]: value });
   }
+
+  const handleCombo = (thisuser: User) => {
+      console.log(thisuser)
+      setFormData({...formData, player: thisuser.name});
+      setSelectedPerson(thisuser);
+  }
+
   const doSubmit = (e: any) => {
     e.preventDefault();
     handleSubmit(DataTypes.Score, formData)
@@ -28,6 +36,7 @@ function ScoreForm({
       });
   };
   const [err, setErr] = useState("");
+  const [selectedPerson, setSelectedPerson] = useState({ID: 0, name: "", short: ""});
   const [formData, setFormData] = useState({
     player: "",
     game: data?.game || "",
@@ -51,15 +60,7 @@ function ScoreForm({
       >
         <label className="my-1">
           <span className="block">Player:</span>
-          <input
-            name="player"
-            type="text"
-            placeholder="Wonder Boy"
-            value={formData.player}
-            onChange={handleChange}
-            required={true}
-            className="p-1 outline outline-1 outline-stone-400 rounded-md valid:outline-green-500"
-          />{" "}
+          <UserCombo users={data?.users} value={selectedPerson} handleChange={handleCombo}/>
         </label>
         <label className="my-1">
           <span className="block">Game:</span>

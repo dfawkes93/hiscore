@@ -5,12 +5,16 @@ import logo from "./logo.svg";
 import "./App.css";
 import { User, Score, Game, DataTypes } from "./Models";
 import { getUsers, getGames, addUser, addGame, addScore } from "./database";
+import { PaperAirplaneIcon } from "@heroicons/react/outline";
 
 function App() {
   const [openModal, setOpenModal] = useState(false);
   const [modalContent, setModalContent] = useState({ game: "", name: "" });
   const [modalType, setModalType] = useState(DataTypes.Score);
-  const [games, setGames] = useState([{ ID: 0, name: "" }]);
+  const [sortFunc, setSortFunc] = useState("popular");
+  const [games, setGames] = useState([
+    { ID: 0, name: "", scores: 0, players: 0, lastUpdated: "" },
+  ]);
   const [users, setUsers] = useState([
     { ID: 0, name: "", short: "", email: "" },
   ]);
@@ -20,9 +24,30 @@ function App() {
       setModalType(type);
     }
     if (content !== undefined) {
-      setModalContent(content);
+      if (type === DataTypes.Score) {
+        setModalContent({ ...content, users: users });
+      } else {
+        setModalContent(content);
+      }
     }
   };
+  function getSortFunction(type: string) {
+    if (type === "popular") {
+      return (a: Game, b: Game) => {
+        return b.players - a.players;
+      };
+    }
+
+    if (type === "newest") {
+      return (a: Game, b: Game) => {
+        return b.lastUpdated > a.lastUpdated ? 1 : -1;
+      };
+    }
+
+    return (a: Game, b: Game) => {
+      return 0;
+    };
+  }
 
   const submitHandler = (
     type: DataTypes,
@@ -60,8 +85,9 @@ function App() {
         const score = value as Score;
         score.gameId = games.find((game) => game.name === score.game)?.ID || -2;
         score.playerId =
-          users.find((user) => user.name === score.player || user.short === score.player)
-            ?.ID || -1;
+          users.find(
+            (user) => user.name === score.player || user.short === score.player
+          )?.ID || -1;
         if (score.gameId === -1) {
           return Promise.reject("Unknown Game");
         }
@@ -116,8 +142,26 @@ function App() {
   return (
     <div className="App bg-slate-200 dark:bg-slate-800 dark:text-slate-300">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
+        <PaperAirplaneIcon className="m-4 p-1 h-10 w-10 text-slate-300 bg-violet-800 rounded-full" />
         <h1>21CS High Scores</h1>
+        <div id="sort" className="mx-auto text-lg">
+          <button
+            className="mx-3 py-1 px-2 rounded-lg outline outline-1 outline-violet-500"
+            onClick={() => {
+              setSortFunc("newest");
+            }}
+          >
+            Most Recent
+          </button>
+          <button
+            className="mx-3 py-1 px-2 rounded-lg outline outline-1 outline-violet-500"
+            onClick={() => {
+              setSortFunc("popular");
+            }}
+          >
+            Most Popular
+          </button>
+        </div>
         <div id="actions" className="ml-auto text-lg">
           <button
             className="mx-3 py-1 px-2 rounded-lg outline outline-1 outline-violet-500"
@@ -139,8 +183,10 @@ function App() {
       </header>
       <div className="container mx-auto px-4">
         <div className="grid grid-flow-row grid-cols-2 gap-4 justify-evenly justify-items-center">
-          {games.map((e) => {
-            return <ScoreTable key={e.name} handleModal={handleModal} game={e} />;
+          {games.sort(getSortFunction(sortFunc)).map((e) => {
+            return (
+              <ScoreTable key={e.name} handleModal={handleModal} game={e} />
+            );
           })}
         </div>
       </div>
