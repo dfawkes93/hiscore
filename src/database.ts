@@ -1,8 +1,8 @@
 import { Score, User, Game } from "./Models";
 import config from "../res/data.js";
-const PORT = config.PORT || 2424;
-const HOST= config.HOST || "localhost"
-const PROTOCOL = config.PROTOCOL || "http"
+const PORT = import.meta.env.PROD ? config.PORT : 8687;
+const HOST= import.meta.env.PROD ? config.HOST : `localhost:${PORT}`
+const PROTOCOL = import.meta.env.PROD ? config.PROTOCOL : "http"
 
 const headers = {
   Accept: "application/json",
