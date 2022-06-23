@@ -1,7 +1,6 @@
 const Database = require("better-sqlite3");
 const express = require("express");
-
-const port = 8282;
+const port = 8687;
 
 const db = new Database("hiscore.db");
 const app = express()

@@ -1,4 +1,6 @@
 export default 
 {
-    PORT: 8282
+    PROTOCOL: "https",
+    HOST: "hiscore.eggy.moe",
+    PORT: 443
 }

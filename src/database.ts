@@ -1,6 +1,8 @@
 import { Score, User, Game } from "./Models";
 import config from "../res/data.js";
 const PORT = config.PORT || 2424;
+const HOST= config.HOST || "localhost"
+const PROTOCOL = config.PROTOCOL || "http"
 
 const headers = {
   Accept: "application/json",
@@ -9,7 +11,7 @@ const headers = {
 
 export async function getUsers(id?: number) {
   let endpoint = "/api/users".concat(id ? `/${id}` : "");
-  return (await fetch(`http://localhost:${PORT}${endpoint}`, {
+  return (await fetch(`${PROTOCOL}://${HOST}${endpoint}`, {
     headers: headers,
   }).then((response) => response.json())) as User[];
 }
@@ -19,7 +21,7 @@ export async function addUser(user: Partial<User>) {
   if (user.name === undefined || user.short === undefined) {
     return Promise.reject({ message: "Incomplete request" });
   }
-  return await fetch(`http://localhost:${PORT}${endpoint}`, {
+  return await fetch(`${PROTOCOL}://${HOST}${endpoint}`, {
     headers: headers,
     method: "POST",
     body: JSON.stringify(user),
@@ -33,7 +35,7 @@ export async function addUser(user: Partial<User>) {
 
 export async function getGames() {
   let endpoint = "/api/games";
-  return (await fetch(`http://localhost:${PORT}${endpoint}`, {
+  return (await fetch(`${PROTOCOL}://${HOST}${endpoint}`, {
     headers: headers,
   }).then((response) => response.json())) as Game[];
 }
@@ -43,7 +45,7 @@ export async function addGame(game: Partial<Game>) {
   if (game.name === undefined) {
     return Promise.reject({ message: "Incomplete request" });
   }
-  return await fetch(`http://localhost:${PORT}${endpoint}`, {
+  return await fetch(`${PROTOCOL}://${HOST}${endpoint}`, {
     headers: headers,
     method: "POST",
     body: JSON.stringify(game),
@@ -58,7 +60,7 @@ export async function addGame(game: Partial<Game>) {
 export async function getGameScores(game: Partial<Game>) {
   let endpoint = "/api/scores";
   return (await fetch(
-    `http://localhost:${PORT}${endpoint}?` +
+    `${PROTOCOL}://${HOST}${endpoint}?` +
       new URLSearchParams({ game: (game?.ID || 1).toString() }),
     { headers: headers }
   ).then((response) => response.json())) as Score[];
@@ -66,7 +68,7 @@ export async function getGameScores(game: Partial<Game>) {
 
 export async function addScore(score: Partial<Score>) {
   let endpoint = "/api/scores";
-  return await fetch(`http://localhost:${PORT}${endpoint}`, {
+  return await fetch(`${PROTOCOL}://${HOST}${endpoint}`, {
     headers: headers,
     method: "POST",
     body: JSON.stringify({ score: score.score, game: score.gameId, player: score.playerId }),
