@@ -16,7 +16,7 @@ function App() {
     { ID: 0, name: "", scores: 0, players: 0, lastUpdated: "" },
   ]);
   const [users, setUsers] = useState([
-    { ID: 0, name: "", short: "", email: "" },
+    { ID: 0, name: "", short: "" },
   ]);
   const handleModal = (show: boolean, type?: DataTypes, content?: any) => {
     setOpenModal(show);
