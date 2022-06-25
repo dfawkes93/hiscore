@@ -22,19 +22,19 @@ function ScoreTable({ handleModal, game }: { handleModal: any; game: Game }) {
   };
 
   return (
-    <div className="my-4">
+    <div className="my-4 min-w-[460px]">
       <div id="table-topbar" className="grid grid-cols-2 mb-1 p-1 align-items-center">
         <h1 className="text-left uppercase font-bold text-indigo-500">
           {game.name}
         </h1>
         <button
-          className="bg-violet-700 px-2 font-bold rounded-lg"
+          className="bg-violet-700 mr-0 ml-auto px-2 font-bold rounded-lg"
           onClick={postNewScore}
         >
           Post new score
         </button>
       </div>
-      <table className="border-collapse">
+      <table className="table-auto border-collapse min-w-full">
         <thead>
           <tr>
             <th className="bg-slate-600">Player</th>
