@@ -22,7 +22,7 @@ function ScoreTable({ handleModal, game }: { handleModal: any; game: Game }) {
   };
 
   return (
-    <div className="my-4 min-w-[460px]">
+    <div className="my-4 min-w-[400px]">
       <div id="table-topbar" className="grid grid-cols-2 mb-1 p-1 align-items-center">
         <h1 className="text-left uppercase font-bold text-indigo-500">
           {game.name}
