@@ -183,7 +183,7 @@ function App() {
         </div>
       </header>
       <div className="container mx-auto">
-        <div className="grid grid-flow-row grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4 justify-evenly justify-items-center">
+        <div className="grid grid-flow-row grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 justify-evenly justify-items-center">
           {games.sort(getSortFunction(sortFunc)).map((e) => {
             return (
               <ScoreTable key={e.name} handleModal={handleModal} game={e} />

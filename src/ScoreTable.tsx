@@ -22,9 +22,9 @@ function ScoreTable({ handleModal, game }: { handleModal: any; game: Game }) {
   };
 
   return (
-    <div className="my-4 min-w-[400px]">
+    <div className="my-4 min-w-[360px]">
       <div id="table-topbar" className="grid grid-cols-2 mb-1 p-1 align-items-center">
-        <h1 className="text-left uppercase font-bold text-indigo-500">
+        <h1 className="text-left text-lg uppercase font-bold text-indigo-500">
           {game.name}
         </h1>
         <button
@@ -45,10 +45,14 @@ function ScoreTable({ handleModal, game }: { handleModal: any; game: Game }) {
         <tbody className="bg-zinc-100 text-indigo-900">
           {scores.slice(0,5).map((score) => {
             return (
-              <tr key={scores.indexOf(score)}>
-                <td className="px-2 text-left">
-                  {" "}
-                  {`${score.short} (${score.player})`}{" "}
+              <tr key={scores.indexOf(score)} className="border-b">
+                <td className="px-2 text-left py-1">
+                  <div className="font-bold">
+                    {score.short}
+                  </div>
+                  <div className="text-xs italic text-gray-400">
+                  {score.player}
+                  </div>
                 </td>
                 <td className="px-2 text-right"> {score.score} </td>
                 <td className="px-2 text-right">
