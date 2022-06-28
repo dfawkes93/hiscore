@@ -52,7 +52,7 @@ function Modal({
       onClose={() => {
         setOpen(false);
       }}
-      className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 "
+      className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 min-w-[280px]"
     >
       <Dialog.Panel
         className="bg-indigo-100 p-2 rounded-lg border-2 border-indigo-800"

@@ -140,11 +140,12 @@ function App() {
   }, []);
 
   return (
-    <div className="App bg-slate-200 dark:bg-slate-800 dark:text-slate-300">
+    <div className="App bg-gray-800 text-slate-300">
       <header className="App-header">
         <PaperAirplaneIcon className="m-4 p-1 h-10 w-10 text-slate-300 bg-violet-800 rounded-full" />
-        <h1>21CS High Scores</h1>
-        <div id="sort" className="mx-auto text-lg">
+        <h1 className="hidden md:inline">21CS High Scores</h1>
+        <h1 className="inline md:hidden">Hiscore</h1>
+        <div id="sort" className="mx-auto text-sm lg:text-md">
           <button
             className="mx-3 py-1 px-2 rounded-lg outline outline-1 outline-violet-500"
             onClick={() => {
@@ -162,7 +163,7 @@ function App() {
             Most Popular
           </button>
         </div>
-        <div id="actions" className="ml-auto text-lg">
+        <div id="actions" className="ml-auto text-sm lg:text-md">
           <button
             className="mx-3 py-1 px-2 rounded-lg outline outline-1 outline-violet-500"
             onClick={() => {

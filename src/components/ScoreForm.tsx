@@ -87,7 +87,7 @@ function ScoreForm({
         </label>
         <div
           id="buttonBar"
-          className="inline pt-2 dark:text-stone-100 font-bold"
+          className="inline pt-2 text-stone-100 font-bold"
         >
           <button
             className="mx-3 px-2 py-1 bg-violet-700 rounded-lg"
