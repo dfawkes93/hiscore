@@ -20,10 +20,20 @@ function ScoreTable({ handleModal, game }: { handleModal: any; game: Game }) {
   const postNewScore = () => {
     handleModal(true, DataTypes.Score, { game: game.name });
   };
-
+  const formatTime = (datetime: string) => {
+    let date = new Date(Date.parse(datetime));
+    return date.toTimeString().split(" ")[0];
+  };
+  const formatDate = (datetime: string) => {
+    let date = new Date(Date.parse(datetime));
+    return date.toDateString();
+  };
   return (
     <div className="my-4 min-w-[360px]">
-      <div id="table-topbar" className="grid grid-cols-2 mb-1 p-1 align-items-center">
+      <div
+        id="table-topbar"
+        className="grid grid-cols-2 mb-1 p-1 align-items-center"
+      >
         <h1 className="text-left text-lg uppercase font-bold text-indigo-500">
           {game.name}
         </h1>
@@ -43,21 +53,19 @@ function ScoreTable({ handleModal, game }: { handleModal: any; game: Game }) {
           </tr>
         </thead>
         <tbody className="bg-zinc-100 text-indigo-900">
-          {scores.slice(0,5).map((score) => {
+          {scores.slice(0, 5).map((score) => {
             return (
               <tr key={scores.indexOf(score)} className="border-b">
                 <td className="px-2 text-left py-1">
-                  <div className="font-bold">
-                    {score.short}
-                  </div>
+                  <div className="font-bold">{score.short}</div>
                   <div className="text-xs italic text-gray-400">
-                  {score.player}
+                    {score.player}
                   </div>
                 </td>
                 <td className="px-2 text-right"> {score.score} </td>
                 <td className="px-2 text-right">
-                  {" "}
-                  {score.date.split(" ")[0]}{" "}
+                  <div className="text-sm">{formatDate(score.date)}</div>
+                  <div className="text-xs text-gray-500">{formatTime(score.date)}</div>
                 </td>
               </tr>
             );
