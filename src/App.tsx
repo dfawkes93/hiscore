@@ -10,10 +10,12 @@ import {
   UserAddIcon,
   UserGroupIcon,
   SparklesIcon,
+  SearchIcon,
 } from "@heroicons/react/outline";
 
 function App() {
   const [openModal, setOpenModal] = useState(false);
+  const [searchString, setSearchString] = useState("");
   const [modalContent, setModalContent] = useState({ game: "", name: "" });
   const [modalType, setModalType] = useState(DataTypes.Score);
   const [sortFunc, setSortFunc] = useState("popular");
@@ -147,20 +149,44 @@ function App() {
       <header className="App-header">
         <PaperAirplaneIcon className="m-4 p-1 h-10 w-10 text-slate-300 bg-violet-800 rounded-full" />
         <h1 className="hidden md:inline">21CS High Scores</h1>
-        <h1 className="inline md:hidden">Hiscore</h1>
-          <button
-            className="ml-auto rounded-lg outline outline-1 outline-violet-500 text-base lg:text-lg inline-flex"
-            onClick={() => {
-              setSortFunc(sortFunc === "newest" ? "popular" : "newest");
+        <h1 className="hidden sm:inline md:hidden">Hiscore</h1>
+        <button
+          className="ml-auto rounded-lg outline outline-1 outline-violet-500 text-base lg:text-lg inline-flex"
+          onClick={() => {
+            setSortFunc(sortFunc === "newest" ? "popular" : "newest");
+          }}
+          title={sortFunc.charAt(0).toUpperCase() + sortFunc.slice(1)}
+        >
+          <div className="hidden sm:inline text-lg ml-auto pl-2 py-2">
+            Sorting:
+          </div>
+          <UserGroupIcon
+            className={
+              "w-6 m-2 inline" + (sortFunc === "popular" ? "" : " hidden")
+            }
+          />
+          <SparklesIcon
+            className={
+              "w-6 m-2 inline" + (sortFunc === "newest" ? "" : " hidden")
+            }
+          />
+        </button>
+        <div
+          id="search"
+          className="bg-gray-600 text-gray-300 text-base rounded-md p-1 ml-auto inline-flex focus-within:absolute focus-within:min-w-full focus-within:rounded-none focus-within:min-h-[3rem] sm:focus-within:static sm:focus-within:min-w-[6rem] sm:focus-within:rounded-md sm:focus-within:min-h-0"
+        >
+          <SearchIcon className="h-4 w-4 sm:h-8 sm:w-8 my-auto" />
+          <input
+            type="text"
+            className="ml-2 bg-transparent focus-visible:outline-none max-w-[4rem] md:max-w-sm focus:max-w-none"
+            placeholder="Search"
+            value={searchString}
+            onChange={(e: any) => {
+              setSearchString(e.target.value);
             }}
-            title={sortFunc.charAt(0).toUpperCase()+sortFunc.slice(1)}
-          >
-            <div className="hidden sm:inline text-lg ml-auto pl-2 py-2">Sorting: 
-            </div>
-            <UserGroupIcon className={"w-6 m-2 inline"+(sortFunc === "popular" ? "" : " hidden")} />
-            <SparklesIcon className={"w-6 m-2 inline"+(sortFunc === "newest" ? "" : " hidden")}/>
-          </button>
-        <div id="actions" className="ml-auto text-sm lg:text-md">
+          ></input>
+        </div>
+        <div id="actions" className="mr-0 text-sm lg:text-md">
           <button
             className="mx-3 p-1 rounded-lg outline outline-1 outline-violet-500"
             onClick={() => {
@@ -183,7 +209,7 @@ function App() {
       </header>
       <div className="container mx-auto">
         <div className="grid grid-flow-row grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 justify-evenly justify-items-center">
-          {games.sort(getSortFunction(sortFunc)).map((e) => {
+          {games.filter((game)=>{return game.name.toLowerCase().includes(searchString.toLowerCase())}).sort(getSortFunction(sortFunc)).map((e) => {
             return (
               <ScoreTable key={e.name} handleModal={handleModal} game={e} />
             );
@@ -197,9 +223,15 @@ function App() {
         modalContent={modalContent}
         submitHandler={submitHandler}
       />
-    <div>
-        Developed by Dylan Fawkes. Send bug reports and feature requests to the <a href="https://github.com/dfawkes93/hiscore/issues" className="text-indigo-400">Github Repo</a>
-    </div>
+      <div>
+        Developed by Dylan Fawkes. Send bug reports and feature requests to the{" "}
+        <a
+          href="https://github.com/dfawkes93/hiscore/issues"
+          className="text-indigo-400"
+        >
+          Github Repo
+        </a>
+      </div>
     </div>
   );
 }
