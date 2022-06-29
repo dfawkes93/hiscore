@@ -1,6 +1,7 @@
 import { Game, User, Score, DataTypes } from "./Models";
 import { getGameScores } from "./database";
 import { useEffect, useState } from "react";
+import { PlusIcon } from "@heroicons/react/outline";
 
 function ScoreTable({ handleModal, game }: { handleModal: any; game: Game }) {
   const defaultScore: Score = {
@@ -41,7 +42,8 @@ function ScoreTable({ handleModal, game }: { handleModal: any; game: Game }) {
           className="bg-violet-700 mr-0 ml-auto px-2 font-bold rounded-lg"
           onClick={postNewScore}
         >
-          Post new score
+          New score
+          <PlusIcon className="ml-2 h-4 w-4 inline"/>
         </button>
       </div>
       <table className="table-auto border-collapse min-w-full">

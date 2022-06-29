@@ -1,11 +1,16 @@
 import { useState, useEffect } from "react";
 import Modal from "./components/Modal";
 import ScoreTable from "./ScoreTable";
-import logo from "./logo.svg";
 import "./App.css";
 import { User, Score, Game, DataTypes } from "./Models";
 import { getUsers, getGames, addUser, addGame, addScore } from "./database";
-import { PaperAirplaneIcon } from "@heroicons/react/outline";
+import {
+  PaperAirplaneIcon,
+  DocumentAddIcon,
+  UserAddIcon,
+  UserGroupIcon,
+  SparklesIcon,
+} from "@heroicons/react/outline";
 
 function App() {
   const [openModal, setOpenModal] = useState(false);
@@ -15,9 +20,7 @@ function App() {
   const [games, setGames] = useState([
     { ID: 0, name: "", scores: 0, players: 0, lastUpdated: "" },
   ]);
-  const [users, setUsers] = useState([
-    { ID: 0, name: "", short: "" },
-  ]);
+  const [users, setUsers] = useState([{ ID: 0, name: "", short: "" }]);
   const handleModal = (show: boolean, type?: DataTypes, content?: any) => {
     setOpenModal(show);
     if (type !== undefined) {
@@ -145,40 +148,36 @@ function App() {
         <PaperAirplaneIcon className="m-4 p-1 h-10 w-10 text-slate-300 bg-violet-800 rounded-full" />
         <h1 className="hidden md:inline">21CS High Scores</h1>
         <h1 className="inline md:hidden">Hiscore</h1>
-        <div id="sort" className="mx-auto text-sm lg:text-md">
           <button
-            className="mx-3 py-1 px-2 rounded-lg outline outline-1 outline-violet-500"
+            className="ml-auto rounded-lg outline outline-1 outline-violet-500 text-base lg:text-lg inline-flex"
             onClick={() => {
-              setSortFunc("newest");
+              setSortFunc(sortFunc === "newest" ? "popular" : "newest");
             }}
+            title={sortFunc.charAt(0).toUpperCase()+sortFunc.slice(1)}
           >
-            Most Recent
+            <div className="hidden sm:inline text-lg ml-auto pl-2 py-2">Sorting: 
+            </div>
+            <UserGroupIcon className={"w-6 m-2 inline"+(sortFunc === "popular" ? "" : " hidden")} />
+            <SparklesIcon className={"w-6 m-2 inline"+(sortFunc === "newest" ? "" : " hidden")}/>
           </button>
-          <button
-            className="mx-3 py-1 px-2 rounded-lg outline outline-1 outline-violet-500"
-            onClick={() => {
-              setSortFunc("popular");
-            }}
-          >
-            Most Popular
-          </button>
-        </div>
         <div id="actions" className="ml-auto text-sm lg:text-md">
           <button
-            className="mx-3 py-1 px-2 rounded-lg outline outline-1 outline-violet-500"
+            className="mx-3 p-1 rounded-lg outline outline-1 outline-violet-500"
             onClick={() => {
               handleModal(true, DataTypes.User);
             }}
+            title="Add User"
           >
-            Add User
+            <UserAddIcon className="h-8 w-8" />
           </button>
           <button
-            className="mx-3 py-1 px-2 rounded-lg outline outline-1 outline-violet-500"
+            className="mx-3 p-1 rounded-lg outline outline-1 outline-violet-500"
             onClick={() => {
               handleModal(true, DataTypes.Game);
             }}
+            title="Add Game"
           >
-            Add Game
+            <DocumentAddIcon className="h-8 w-8" />
           </button>
         </div>
       </header>
@@ -198,6 +197,9 @@ function App() {
         modalContent={modalContent}
         submitHandler={submitHandler}
       />
+    <div>
+        Developed by Dylan Fawkes. Send bug reports and feature requests to the <a href="https://github.com/dfawkes93/hiscore/issues" className="text-indigo-400">Github Repo</a>
+    </div>
     </div>
   );
 }
