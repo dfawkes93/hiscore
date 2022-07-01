@@ -11,14 +11,20 @@ import {
   UserGroupIcon,
   SparklesIcon,
   SearchIcon,
+  SortDescendingIcon,
 } from "@heroicons/react/outline";
 
 function App() {
+  enum SortFuncs {
+    "Popular",
+    "Newest",
+    "Alpha",
+  }
   const [openModal, setOpenModal] = useState(false);
   const [searchString, setSearchString] = useState("");
   const [modalContent, setModalContent] = useState({ game: "", name: "" });
   const [modalType, setModalType] = useState(DataTypes.Score);
-  const [sortFunc, setSortFunc] = useState("popular");
+  const [sortFunc, setSortFunc] = useState(SortFuncs.Newest);
   const [games, setGames] = useState([
     { ID: 0, name: "", scores: 0, players: 0, lastUpdated: "" },
   ]);
@@ -36,16 +42,36 @@ function App() {
       }
     }
   };
-  function getSortFunction(type: string) {
-    if (type === "popular") {
+
+  const cycleSortFunction = (func: number) => {
+    if (func > Object.keys(SortFuncs).length / 2 - 1) {
+      func = 0;
+    }
+    setSortFunc(func);
+  };
+
+  function getSortFunction(type: SortFuncs) {
+    if (type === SortFuncs.Popular) {
       return (a: Game, b: Game) => {
         return b.players - a.players;
       };
     }
 
-    if (type === "newest") {
+    if (type === SortFuncs.Newest) {
       return (a: Game, b: Game) => {
+        if (!a.lastUpdated) {
+            return 1;
+        }
+        if (!b.lastUpdated) {
+            return -1;
+        }
         return b.lastUpdated > a.lastUpdated ? 1 : -1;
+      };
+    }
+
+    if (type === SortFuncs.Alpha) {
+      return (a: Game, b: Game) => {
+        return a.name > b.name ? 1 : -1;
       };
     }
 
@@ -153,21 +179,28 @@ function App() {
         <button
           className="ml-auto rounded-lg outline outline-1 outline-violet-500 text-base lg:text-lg inline-flex"
           onClick={() => {
-            setSortFunc(sortFunc === "newest" ? "popular" : "newest");
+            cycleSortFunction(sortFunc + 1);
           }}
-          title={sortFunc.charAt(0).toUpperCase() + sortFunc.slice(1)}
+          title={SortFuncs[sortFunc]}
         >
           <div className="hidden sm:inline text-lg ml-auto pl-2 py-2">
             Sorting:
           </div>
           <UserGroupIcon
             className={
-              "w-6 m-2 inline" + (sortFunc === "popular" ? "" : " hidden")
+              "w-6 m-2 inline" +
+              (sortFunc === SortFuncs.Popular ? "" : " hidden")
             }
           />
           <SparklesIcon
             className={
-              "w-6 m-2 inline" + (sortFunc === "newest" ? "" : " hidden")
+              "w-6 m-2 inline" +
+              (sortFunc === SortFuncs.Newest ? "" : " hidden")
+            }
+          />
+          <SortDescendingIcon
+            className={
+              "w-6 m-2 inline" + (sortFunc === SortFuncs.Alpha ? "" : " hidden")
             }
           />
         </button>
@@ -209,11 +242,18 @@ function App() {
       </header>
       <div className="container mx-auto">
         <div className="grid grid-flow-row grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 justify-evenly justify-items-center">
-          {games.filter((game)=>{return game.name.toLowerCase().includes(searchString.toLowerCase())}).sort(getSortFunction(sortFunc)).map((e) => {
-            return (
-              <ScoreTable key={e.name} handleModal={handleModal} game={e} />
-            );
-          })}
+          {games
+            .filter((game) => {
+              return game.name
+                .toLowerCase()
+                .includes(searchString.toLowerCase());
+            })
+            .sort(getSortFunction(sortFunc))
+            .map((e) => {
+              return (
+                <ScoreTable key={e.name} handleModal={handleModal} game={e} />
+              );
+            })}
         </div>
       </div>
       <Modal

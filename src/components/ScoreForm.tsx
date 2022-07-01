@@ -19,7 +19,6 @@ function ScoreForm({
   }
 
   const handleCombo = (thisuser: User) => {
-      console.log(thisuser)
       setFormData({...formData, player: thisuser.name});
       setSelectedPerson(thisuser);
   }
@@ -79,7 +78,7 @@ function ScoreForm({
             name="score"
             type="text"
             value={formData.score}
-            pattern={"[0-9]+"}
+            pattern={"[0-9-\.]+"}
             required={true}
             onChange={handleChange}
             className="p-1 outline outline-1 outline-stone-400 rounded-md"
