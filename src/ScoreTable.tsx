@@ -22,11 +22,13 @@ function ScoreTable({ handleModal, game }: { handleModal: any; game: Game }) {
     handleModal(true, DataTypes.Score, { game: game.name });
   };
   const formatTime = (datetime: string) => {
-    let date = new Date(Date.parse(datetime+"+00:00"));
+    if (!datetime) return "-";
+    const date = new Date(datetime + "+00:00");
     return date.toLocaleTimeString('en-GB', {timeStyle: 'short'});
   };
   const formatDate = (datetime: string) => {
-    let date = new Date(Date.parse(datetime));
+    if (!datetime) return "-";
+    const date = new Date(datetime + "+00:00");
     return date.toLocaleDateString('en-GB', {weekday: 'short', day: 'numeric', month: 'short', year: 'numeric'});
   };
   return (
