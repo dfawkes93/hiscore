@@ -23,13 +23,18 @@ function ScoreTable({ handleModal, game }: { handleModal: any; game: Game }) {
   };
   const formatTime = (datetime: string) => {
     if (!datetime) return "-";
-    const date = new Date(datetime + "+00:00");
-    return date.toLocaleTimeString('en-GB', {timeStyle: 'short'});
+    const date = new Date(datetime.replace(/ /g, "T") + "+00:00");
+    return date.toLocaleTimeString("en-GB", { timeStyle: "short" });
   };
   const formatDate = (datetime: string) => {
     if (!datetime) return "-";
-    const date = new Date(datetime + "+00:00");
-    return date.toLocaleDateString('en-GB', {weekday: 'short', day: 'numeric', month: 'short', year: 'numeric'});
+    const date = new Date(datetime.replace(/ /g, "T") + "+00:00");
+    return date.toLocaleDateString("en-GB", {
+      weekday: "short",
+      day: "numeric",
+      month: "short",
+      year: "numeric"
+    });
   };
   return (
     <div className="my-4 min-w-[360px]">
@@ -69,7 +74,9 @@ function ScoreTable({ handleModal, game }: { handleModal: any; game: Game }) {
                 <td className="px-2 text-right"> {score.score} </td>
                 <td className="px-2 text-right">
                   <div className="text-sm">{formatDate(score.date)}</div>
-                  <div className="text-xs text-gray-500">{formatTime(score.date)}</div>
+                  <div className="text-xs text-gray-500">
+                    {formatTime(score.date)}
+                  </div>
                 </td>
               </tr>
             );
