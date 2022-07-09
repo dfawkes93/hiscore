@@ -56,6 +56,7 @@ function ScoreForm({
       <form
         onSubmit={doSubmit}
         className="grid grid-cols-1 justify-items-center outline-offset-1"
+        autoComplete="off"
       >
         <label className="my-1">
           <span className="block">Player:</span>
