@@ -1,27 +1,40 @@
 import { useState } from "react";
 import { Dialog } from "@headlessui/react";
-import { DataTypes } from "../Models";
+import { User } from "../Models";
+import { useLoaderData, useNavigate, useSubmit } from "react-router-dom";
 
-function UserForm({
-  handleSubmit,
-  setOpen,
-}: {
-  handleSubmit: any;
-  setOpen: any;
-}) {
+function UserForm() {
+  const userList = useLoaderData() as User[]
+
   function handleChange(event: any) {
     const value = event.target.value as string;
     const name = event.target.name as "name" | "short" | "email";
     setFormData({ ...formData, [name]: value });
+    switch (name) {
+      case "name":
+        if (userList.some(({ name }) => name === value)) {
+          setErr(`User "${value}" already exists.`);
+        } else {
+          setErr("")
+        }
+        break;
+      case "short":
+        if (userList.some(({ short }) => short === value)) {
+          setErr(`Arcade name "${value}" already taken.`);
+        } else {
+          setErr("")
+        }
+        break;
+    }
   }
+  const navigate = useNavigate();
+  const submit = useSubmit();
   const doSubmit = (e: any) => {
     e.preventDefault();
-    handleSubmit(DataTypes.User, formData)
-    .then(() => setOpen(false), (e: string) => setErr(e))
-    .catch((e: string) => {setErr(e)});
+    submit(formData, { method: "post" })
   };
   const [err, setErr] = useState("");
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<Omit<User, "ID">>({
     name: "",
     short: "",
     email: "",
@@ -78,20 +91,22 @@ function UserForm({
         >
           <button
             className="mx-3 px-2 py-1 bg-violet-700 rounded-lg"
-            onClick={() => {
-              setOpen(false);
+            onClick={(e) => {
+              e.preventDefault()
+              navigate(-1)
             }}
           >
             Close
           </button>
           <button
             type="submit"
-            className="mx-3 px-2 py-1 bg-violet-700 rounded-lg"
+            disabled={err.length > 0}
+            className="mx-3 px-2 py-1 bg-violet-700 disabled:bg-slate-600 rounded-lg"
           >
             Add New User
           </button>
         </div>
-        <div className={"text-red-600 "+ (!!err ? "" : "display-none")}>{err}</div>
+        <div className={"text-red-600 " + (!!err ? "" : "display-none")}>{err}</div>
       </form>
     </div>
   );

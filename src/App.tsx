@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import Modal from "./components/Modal";
-import ScoreTable from "./ScoreTable";
 import "./App.css";
 import { User, Score, Game, DataTypes } from "./Models";
 import { getUsers, getGames, addUser, addGame, addScore } from "./database";
 import Header from "./components/Header";
 import { getSortFunction, SortFuncs } from "./utils/sorting";
+import { Outlet } from "react-router-dom";
 
 function App() {
   const [openModal, setOpenModal] = useState(false);
@@ -34,119 +34,84 @@ function App() {
   const submitHandler = (
     type: DataTypes,
     value: User | Score | Game
-  ): Promise<string> => {
-    switch (type) {
-      case DataTypes.User:
-        const user = value as User;
-        if (
-          users.some((e) => {
-            return e.name === user.name;
-          })
-        ) {
-          return Promise.reject(`User "${user.name}" already exists.`);
+  ): Promise<string> =>
+    new Promise((res, rej) => {
+      switch (type) {
+        case DataTypes.User:
+          const user = value as User;
+          if (users.some(({ name }) => name === user.name)) {
+            return rej(`User "${user.name}" already exists.`);
+          }
+          if (users.some(({ short }) => short === user.short)) {
+            return rej(`Arcade name "${user.short}" already taken.`);
+          }
+          addUser(user)
+            .then(getUsers)
+            .then((response) => setUsers(response))
+            .catch((e) => {
+              const msg = "Error adding user. " + e.message;
+              console.error(msg);
+              rej(msg);
+            });
+          return res(`User ${user.name} added successfully`);
+        case DataTypes.Score: {
+          const score = value as Score;
+          const game = games.find(({ name }) => name === score.game);
+          const player = users.find(
+            ({ name, short }) => name === score.player || short === score.player
+          );
+          score.gameId = game?.ID || -2;
+          if (score.gameId === -1) {
+            return rej("Unknown Game");
+          }
+
+          score.playerId = player?.ID || -1;
+          if (score.playerId === -1) {
+            return rej("Unknown Player");
+          }
+          addScore(score)
+            .then(getGames)
+            .then((response) => response && setGames(response))
+            .catch((e) => {
+              const msg = "Error adding score. " + e.message;
+              console.error(msg);
+              rej(msg);
+            });
+          return res(`Score added successfully`);
         }
-        if (
-          users.some((e) => {
-            return e.short === user.short;
-          })
-        ) {
-          return Promise.reject(`Arcade name "${user.short}" already taken.`);
+        case DataTypes.Game: {
+          const game = value as Game;
+          if (games.some(({ name }) => name === game.name)) {
+            return rej(`Game "${game.name}" already exists.`);
+          }
+          addGame(game)
+            .then(getGames)
+            .then((response) => response && setGames(response))
+            .catch((e) => {
+              const msg = "Error adding game. " + e.message;
+              console.error(msg);
+              rej(msg);
+            });
+          return res(`Game ${game.name} added successfully`);
         }
-        addUser(user)
-          .then(() => {
-            return getUsers();
-          })
-          .then((response) => {
-            response && setUsers(response);
-          })
-          .catch((e) => {
-            console.error("Error adding user. " + e.message);
-          });
-        return Promise.resolve(`User ${user.name} added successfully`);
-      case DataTypes.Score:
-        const score = value as Score;
-        score.gameId = games.find((game) => game.name === score.game)?.ID || -2;
-        score.playerId =
-          users.find(
-            (user) => user.name === score.player || user.short === score.player
-          )?.ID || -1;
-        if (score.gameId === -1) {
-          return Promise.reject("Unknown Game");
-        }
-        if (score.playerId === -1) {
-          return Promise.reject("Unknown Player");
-        }
-        addScore(score)
-          .then(() => {
-            return getGames();
-          })
-          .then((response) => {
-            response && setGames(response);
-          })
-          .catch((e) => {
-            console.error("Error adding score. " + e.message);
-          });
-        return Promise.resolve(`Score added successfully`);
-      case DataTypes.Game:
-        const game = value as Game;
-        if (
-          games.some((e) => {
-            return e.name === game.name;
-          })
-        ) {
-          return Promise.reject(`Game "${game.name}" already exists.`);
-        }
-        addGame(game)
-          .then(() => {
-            return getGames();
-          })
-          .then((response) => {
-            response && setGames(response);
-          })
-          .catch((e) => {
-            console.error("Error adding game. " + e.message);
-          });
-        return Promise.resolve(`Game ${game.name} added successfully`);
-    }
-    return Promise.reject("Unhandled case");
-  };
+      }
+    });
 
   //Load initial game list
-  useEffect(() => {
-    getUsers().then((res) => {
-      setUsers(res);
-    });
-    getGames().then((res) => {
-      setGames(res);
-    });
-  }, []);
+  // useEffect(() => {
+  //   getUsers().then(setUsers);
+  //   getGames().then(setGames);
+  // }, []);
 
   return (
     <div className="App bg-gray-800 text-slate-300">
-      <Header searchString={searchString} setSearchString={setSearchString} sortFunc={sortFunc} setSortFunc={setSortFunc} handleModal={handleModal}/>
-      <div className="container mx-auto">
-        <div className="grid grid-flow-row grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 justify-evenly justify-items-center">
-          {games
-            .filter((game) => {
-              return game.name
-                .toLowerCase()
-                .includes(searchString.toLowerCase());
-            })
-            .sort(getSortFunction(sortFunc))
-            .map((e) => {
-              return (
-                <ScoreTable key={e.name} handleModal={handleModal} game={e} />
-              );
-            })}
-        </div>
-      </div>
-      <Modal
-        open={openModal}
-        setOpen={handleModal}
-        modalType={modalType}
-        modalContent={modalContent}
-        submitHandler={submitHandler}
+      <Header
+        handleModal={handleModal}
       />
+      <div className="container mx-auto">
+        <Outlet />
+      </div>
+      {/*<Modal submitHandler={submitHandler}/>*/}
       <div>
         Developed by Dylan Fawkes. Send bug reports and feature requests to the{" "}
         <a

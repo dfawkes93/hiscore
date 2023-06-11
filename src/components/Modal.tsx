@@ -1,66 +1,78 @@
-import { ReactNode, useEffect, useState } from "react";
 import { Dialog } from "@headlessui/react";
 import { DataTypes } from "../Models";
 import UserForm from "./UserForm";
 import GameForm from "./GameForm";
 import ScoreForm from "./ScoreForm";
+import {
+  createBrowserRouter,
+  Outlet,
+  redirect,
+  RouteObject,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
+import { addGame, addScore, addUser, getGames, getUsers } from "../database";
 
-function Modal({
-  open,
-  setOpen,
-  modalType,
-  modalContent,
-  submitHandler,
-}: {
-  open: boolean;
-  setOpen: any;
-  modalType: DataTypes;
-  modalContent?: any;
-  submitHandler: any;
-}) {
+export const modalRoutes: RouteObject[] = [
+  {
+    path: "new",
+    element: <Modal />,
+    children: [
+      {
+        path: "score",
+        index: true,
+        element: <ScoreForm />,
+        loader: () => getUsers(),
+        action: (async ({ params, request }) => {
+          let formData = await request.formData()
+          addScore(Object.fromEntries(formData))
+          return redirect("../../")
+        })
+      },
+      {
+        path: "user",
+        element: <UserForm />,
+        loader: () => getUsers(),
+        action: (async ({ params, request }) => {
+          let formData = await request.formData()
+          addUser(Object.fromEntries(formData))
+          return redirect("../../")
+        })
+      },
+      {
+        path: "game",
+        element: <GameForm />,
+        loader: () => getGames(),
+        action: (async ({ params, request }) => {
+          let formData = await request.formData()
+          addGame(Object.fromEntries(formData))
+          return redirect("../../")
+        })
+      },
+    ],
+  },
+];
 
-
-  //const [content, setContent] = useState({game:"",user:""});
-
-  const generateType = (modalType: DataTypes, submitHandler: any, setOpen: any, modalContent?: any) => {
-    {
-      if (modalType === undefined) {
-          return <p>{modalContent}</p>
-      }
-      switch (modalType) {
-        case DataTypes.User:
-          return <UserForm handleSubmit={submitHandler} setOpen={setOpen}/>;
-        case DataTypes.Score:
-          return <ScoreForm handleSubmit={submitHandler} setOpen={setOpen} data={modalContent}/>;
-        case DataTypes.Game:
-          return <GameForm handleSubmit={submitHandler} setOpen={setOpen}/>;
-        default:
-          return <div/>
-      }
-    }
-  };
-
-  //const [type, setType] = useState(generateType());
-
-  //useEffect(() => {
-   //   setType(generateType(modalContent));
-  //}, [modalType, modalContent]);
+export function Modal() {
+  const navigate = useNavigate();
 
   return (
     <Dialog
-      open={open}
+      open={true}
       onClose={() => {
-        setOpen(false);
+        navigate(-1)
       }}
-      className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 min-w-[280px]"
+      className="relative z-50"
     >
-      <Dialog.Panel
-        className="bg-indigo-100 p-2 rounded-lg border-2 border-indigo-800"
-      >
-        {generateType(modalType, submitHandler, setOpen, modalContent)}
-      </Dialog.Panel>
+      {/* The backdrop, rendered as a fixed sibling to the panel container */}
+      <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+
+      {/* Full-screen container to center the panel */}
+      <div className="fixed inset-0 flex items-center justify-center p-4">
+        <Dialog.Panel className="bg-indigo-100 p-2 rounded-lg border-2 border-indigo-800">
+          <Outlet />
+        </Dialog.Panel>
+      </div>
     </Dialog>
   );
 }
-
-export default Modal;

@@ -1,17 +1,16 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Dialog } from "@headlessui/react";
-import { DataTypes, User } from "../Models";
+import { Score, User } from "../Models";
 import { UserCombo } from "./UserCombo";
+import { FormData } from "../utils/types";
+import { useLoaderData, useLocation, useNavigate, useSubmit } from "react-router-dom";
 
-function ScoreForm({
-  handleSubmit,
-  setOpen,
-  data,
-}: {
-  handleSubmit: any;
-  setOpen: any;
-  data?: any;
-}) {
+function ScoreForm() {
+  const navigate = useNavigate()
+  const userList = useLoaderData() as User[]
+  const location = useLocation()
+  const submit = useSubmit()
+
   const handleChange = (event: any) => {
     const value = event.target.value as string;
     const name = event.target.name as "player" | "game" | "score";
@@ -19,37 +18,26 @@ function ScoreForm({
   }
 
   const handleCombo = (thisuser: User) => {
-      setFormData({...formData, player: thisuser.name});
-      setSelectedPerson(thisuser);
+    setFormData({ ...formData, player: thisuser.name, playerId: thisuser.ID.toString() });
+    setSelectedPerson(thisuser);
   }
 
   const doSubmit = (e: any) => {
     e.preventDefault();
-    handleSubmit(DataTypes.Score, formData)
-      .then(
-        () => setOpen(false),
-        (e: string) => setErr(e)
-      )
-      .catch((e: string) => {
-        setErr(e);
-      });
+    submit(formData, {
+      method: "put",
+    })
   };
+
   const [err, setErr] = useState("");
-  const [selectedPerson, setSelectedPerson] = useState({ID: 0, name: "", short: ""});
-  const [formData, setFormData] = useState({
+  const [selectedPerson, setSelectedPerson] = useState({ ID: 0, name: "", short: "" });
+  const [formData, setFormData] = useState<FormData<Score>>({
     player: "",
-    game: data?.game || "",
-    score: data?.score || "",
+    game: location?.state?.modal?.game?.name || "",
+    gameId: location?.state?.modal?.game?.ID || "",
+    score: ""
   });
 
-  useEffect(() => {
-    if (data?.game !== undefined) {
-      setFormData({ ...formData, game: data.game });
-    }
-    if (data?.player !== undefined) {
-      setFormData({ ...formData, player: data.player });
-    }
-  }, [data]);
   return (
     <div>
       <Dialog.Title className="pl-2 font-bold text-lg">Add Score</Dialog.Title>
@@ -60,7 +48,7 @@ function ScoreForm({
       >
         <label className="my-1">
           <span className="block">Player:</span>
-          <UserCombo users={data?.users} value={selectedPerson} handleChange={handleCombo}/>
+          <UserCombo users={userList} value={selectedPerson} handleChange={handleCombo} />
         </label>
         <label className="my-1">
           <span className="block">Game:</span>
@@ -91,8 +79,9 @@ function ScoreForm({
         >
           <button
             className="mx-3 px-2 py-1 bg-violet-700 rounded-lg"
-            onClick={() => {
-              setOpen(false);
+            onClick={(e) => {
+              e.preventDefault()
+              navigate(-1)
             }}
           >
             Close
