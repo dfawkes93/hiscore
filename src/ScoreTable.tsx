@@ -13,7 +13,7 @@ function ScoreTable({
 }) {
   const [scores, setScores] = useState<Score[]>([]);
 
-  const ref = useRef<HTMLTableElement>()
+  const ref = useRef<HTMLTableElement>(null)
 
   useEffect(() => {
     const observer = new IntersectionObserver(
