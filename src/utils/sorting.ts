@@ -1,8 +1,8 @@
 import { Game } from "../Models";
 
 export  enum SortFuncs {
-    "Popular",
     "Newest",
+    "Popular",
     "Alpha",
   }
 

@@ -6,19 +6,28 @@ import {
   SparklesIcon,
   SearchIcon,
   SortDescendingIcon,
+  ChevronLeftIcon,
 } from "@heroicons/react/outline";
-import { Form, useNavigate, useSearchParams } from "react-router-dom";
+import { Form, Link, useMatches, useNavigate, useSearchParams } from "react-router-dom";
 import { DataTypes } from "../Models";
 import { cycleSortFunction, SortFuncs } from "../utils/sorting";
 
-function Header({ handleModal }: { handleModal: any }) {
+function Header() {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate()
+  const matches = useMatches()
+  type BBHandle = { needsBackButton: (params: typeof matches[number]["params"]) => boolean } // Typescript...
+  const needsBackButton = matches
+    .filter((match) => Boolean((match.handle as Partial<BBHandle>)?.needsBackButton))
+    .some((match) => (match.handle as BBHandle).needsBackButton(match.params))
   const q = searchParams.get("q");
   const sortFunc = Number(searchParams.get("sort") ?? 0);
   return (
     <header className="App-header">
-      <PaperAirplaneIcon className="m-4 p-1 h-10 w-10 text-slate-300 bg-violet-800 rounded-full" />
+      { needsBackButton 
+      ? <Link to={".."}><ChevronLeftIcon className="m-4 p-1 h-10 w-10 text-slate-300 bg-violet-800 rounded-full" /></Link>
+      : <PaperAirplaneIcon className="m-4 p-1 h-10 w-10 text-slate-300 bg-violet-800 rounded-full" />
+      }
       <h1 className="hidden md:inline">21CS High Scores</h1>
       <h1 className="hidden sm:inline md:hidden">Hiscore</h1>
       <button

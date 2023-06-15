@@ -1,6 +1,6 @@
 import { Game, Score, DataTypes } from "./Models";
 import { getGameScores } from "./database";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { PlusIcon } from "@heroicons/react/outline";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
@@ -11,19 +11,30 @@ function ScoreTable({
   game: Game;
   limit?: number;
 }) {
-  const defaultScore: Score = {
-    player: "",
-    short: "",
-    game: game.name,
-    score: 0,
-    date: "",
-  };
-  const [scores, setScores] = useState([defaultScore]);
+  const [scores, setScores] = useState<Score[]>([]);
+
+  const ref = useRef<HTMLTableElement>()
+
   useEffect(() => {
-    getGameScores(game).then((res) => {
-      setScores(res);
-    });
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        entry.isIntersecting && 
+        loadScores()
+      },
+      {
+        rootMargin: "0px"
+      }
+    );
+    observer.observe(ref.current!);
+    return () => observer.disconnect();
   }, [game]);
+
+  const loadScores = () => 
+        getGameScores(game)
+          .then((res) => res.json())
+          .then((res) => {
+            setScores(res);
+          });
 
   const formatTime = (datetime: string) => {
     if (!datetime) return "-";
@@ -55,13 +66,13 @@ function ScoreTable({
         </h1>
         <button
           className="bg-violet-700 mr-0 ml-auto px-2 font-bold rounded-lg"
-          onClick={() => navigate({ pathname: "new/score", search: params.toString() }, { state: { modal: { type: DataTypes.Score, game: game } }})}
+          onClick={() => navigate({ pathname: "new/score", search: params.toString() }, { state: { modal: { type: DataTypes.Score, game: game } } })}
         >
           New score
           <PlusIcon className="ml-2 h-4 w-4 inline" />
         </button>
       </div>
-      <table className="table-auto border-collapse min-w-full">
+      <table className="table-auto border-collapse min-w-full" ref={ref}>
         <thead>
           <tr>
             <th className="bg-slate-600">Player</th>
@@ -70,25 +81,36 @@ function ScoreTable({
           </tr>
         </thead>
         <tbody className="bg-zinc-100 text-indigo-900">
-          {scores.slice(0, limit).map((score) => {
-            return (
-              <tr key={scores.indexOf(score)} className="border-b">
-                <td className="px-2 text-left py-1">
-                  <div className="font-bold">{score.short}</div>
-                  <div className="text-xs italic text-gray-400">
-                    {score.player}
-                  </div>
+          {scores ?
+            scores.slice(0, limit).map((score) => {
+              return (
+                <tr key={scores.indexOf(score)} className="border-b">
+                  <td className="px-2 text-left py-1">
+                    <div className="font-bold">{score.short}</div>
+                    <div className="text-xs italic text-gray-400">
+                      {score.player}
+                    </div>
+                  </td>
+                  <td className="px-2 text-right"> {score.score} </td>
+                  <td className="px-2 text-right">
+                    <div className="text-sm">{formatDate(score.date)}</div>
+                    <div className="text-xs text-gray-500">
+                      {formatTime(score.date)}
+                    </div>
+                  </td>
+                </tr>
+              );
+            }) :
+            new Array(5).fill(
+              <tr className="border-b">
+                <td className="px-2 text-left py-1 h-12">
                 </td>
-                <td className="px-2 text-right"> {score.score} </td>
-                <td className="px-2 text-right">
-                  <div className="text-sm">{formatDate(score.date)}</div>
-                  <div className="text-xs text-gray-500">
-                    {formatTime(score.date)}
-                  </div>
+                <td className="px-2 py-1">
                 </td>
-              </tr>
-            );
-          })}
+                <td className="px-2 py-1">
+                </td>
+              </tr>)
+          }
         </tbody>
       </table>
     </div>
