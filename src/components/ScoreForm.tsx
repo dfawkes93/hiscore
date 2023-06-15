@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Dialog } from "@headlessui/react";
 import { Score, User } from "../Models";
 import { UserCombo } from "./UserCombo";
@@ -7,9 +7,15 @@ import { useLoaderData, useLocation, useNavigate, useSubmit } from "react-router
 
 function ScoreForm() {
   const navigate = useNavigate()
-  const userList = useLoaderData() as User[]
+  const userListData = useLoaderData() as User[]
   const location = useLocation()
   const submit = useSubmit()
+
+  const [userList, setUserList] = useState<User[]>([])
+
+  useEffect(() => {
+    setUserList(userListData)
+  }, [userListData])
 
   const handleChange = (event: any) => {
     const value = event.target.value as string;
@@ -33,8 +39,8 @@ function ScoreForm() {
   const [selectedPerson, setSelectedPerson] = useState({ ID: 0, name: "", short: "" });
   const [formData, setFormData] = useState<FormData<Score>>({
     player: "",
-    game: location?.state?.modal?.game?.name || "",
-    gameId: location?.state?.modal?.game?.ID || "",
+    game: location.state?.modal?.game?.name || "",
+    gameId: location.state?.modal?.game?.ID || "",
     score: ""
   });
 

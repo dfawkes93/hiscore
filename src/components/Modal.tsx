@@ -1,17 +1,15 @@
 import { Dialog } from "@headlessui/react";
-import { DataTypes } from "../Models";
 import UserForm from "./UserForm";
 import GameForm from "./GameForm";
 import ScoreForm from "./ScoreForm";
 import {
-  createBrowserRouter,
   Outlet,
   redirect,
   RouteObject,
-  useLocation,
   useNavigate,
 } from "react-router-dom";
 import { addGame, addScore, addUser, getGames, getUsers } from "../database";
+import { ErrorBoundary } from "./Error";
 
 export const modalRoutes: RouteObject[] = [
   {
@@ -20,34 +18,38 @@ export const modalRoutes: RouteObject[] = [
     children: [
       {
         path: "score",
+        errorElement: <ErrorBoundary />,
         index: true,
         element: <ScoreForm />,
-        loader: () => getUsers(),
-        action: (async ({ params, request }) => {
+        loader: async () => getUsers(),
+        action: async ({ request }) => {
           let formData = await request.formData()
-          addScore(Object.fromEntries(formData))
-          return redirect("../../")
-        })
+          let ok = false
+          await addScore(Object.fromEntries(formData)).then((res) => ok = res.ok)
+          return ok ? redirect("../../") : null
+        }
       },
       {
         path: "user",
+        errorElement: <ErrorBoundary />,
         element: <UserForm />,
-        loader: () => getUsers(),
-        action: (async ({ params, request }) => {
+        loader: async () => getUsers(),
+        action: async ({ request }) => {
           let formData = await request.formData()
-          addUser(Object.fromEntries(formData))
+          await addUser(Object.fromEntries(formData))
           return redirect("../../")
-        })
+        }
       },
       {
         path: "game",
+        errorElement: <ErrorBoundary />,
         element: <GameForm />,
-        loader: () => getGames(),
-        action: (async ({ params, request }) => {
+        loader: async () => getGames(),
+        action: async ({ request }) => {
           let formData = await request.formData()
-          addGame(Object.fromEntries(formData))
+          await addGame(Object.fromEntries(formData))
           return redirect("../../")
-        })
+        }
       },
     ],
   },

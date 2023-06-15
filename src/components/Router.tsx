@@ -11,6 +11,7 @@ import { getSortFunction } from "../utils/sorting";
 import { Game } from "../Models";
 import App from "../App";
 import { modalRoutes } from "../components/Modal";
+import { ErrorBoundary } from "./Error";
 
 function GameList() {
   const [searchParams] = useSearchParams();
@@ -29,8 +30,8 @@ function GameList() {
   return (
     <div className="grid grid-flow-row grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 justify-evenly justify-items-center">
       {games
-      .filter((game) => game.name.toLowerCase().includes(find.toLowerCase()))
-      .sort(getSortFunction(sort))
+        .filter((game) => game.name.toLowerCase().includes(find.toLowerCase()))
+        .sort(getSortFunction(sort))
         .map((e) => (
           <ScoreTable key={e.name} game={e} limit={5} />
         ))}
@@ -54,8 +55,12 @@ export const router = createBrowserRouter([
       },
       {
         path: "games/:name?",
-        loader: async ({ request, params }) => {
-          const games = await getGames()
+        errorElement: <ErrorBoundary />,
+        handle: {
+          needsBackButton: (params: { name?: string }) => Boolean(params?.name)
+        },
+        loader: async ({ params }) => {
+          const games = await getGames().then((res) => res.json()) as Game[]
           const search = params.name ?? "";
           return search ? [games.find(({ name }) =>
             name.toLowerCase().includes(search.toLowerCase())
@@ -63,7 +68,7 @@ export const router = createBrowserRouter([
         },
         element: <GameList />,
         children: modalRoutes,
-        shouldRevalidate: ({ currentUrl, nextUrl }) => { return !(currentUrl.pathname.includes("/new") || nextUrl.pathname.includes("/new")) }
+        shouldRevalidate: ({ nextUrl }) => { return !(nextUrl.pathname.includes("/new")) }
       },
     ],
   },

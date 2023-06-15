@@ -1,7 +1,7 @@
 import { Score, User, Game } from "./Models";
 import config from "../res/data.js";
 const PORT = import.meta.env.PROD ? config.PORT : 8687;
-const HOST= import.meta.env.PROD ? config.HOST : `localhost:${PORT}`
+const HOST = import.meta.env.PROD ? config.HOST : `localhost:${PORT}`
 const PROTOCOL = import.meta.env.PROD ? config.PROTOCOL : "http"
 
 const headers = {
@@ -11,71 +11,56 @@ const headers = {
 
 export async function getUsers(id?: number) {
   let endpoint = "/api/users".concat(id ? `/${id}` : "");
-  return (await fetch(`${PROTOCOL}://${HOST}${endpoint}`, {
-    headers: headers,
-  }).then((response) => response.json())) as User[];
+  return fetch(`${PROTOCOL}://${HOST}${endpoint}`, {
+    headers: headers
+  })
 }
 
 export async function addUser(user: Partial<User>) {
   let endpoint = "/api/users";
   if (user.name === undefined || user.short === undefined) {
-    return Promise.reject({ message: "Incomplete request" });
+    return { message: "Incomplete request" };
   }
-  return await fetch(`${PROTOCOL}://${HOST}${endpoint}`, {
+  return fetch(`${PROTOCOL}://${HOST}${endpoint}`, {
     headers: headers,
     method: "POST",
     body: JSON.stringify(user),
-  }).then((response) => {
-    if (response.status === 400) {
-      return Promise.reject({ message: "Duplicate entry" });
-    }
-    return response.json();
-  });
+  })
 }
 
 export async function getGames() {
   let endpoint = "/api/games";
-  return (await fetch(`${PROTOCOL}://${HOST}${endpoint}`, {
+  return fetch(`${PROTOCOL}://${HOST}${endpoint}`, {
     headers: headers,
-  }).then((response) => response.json())) as Game[];
+  })
 }
 
 export async function addGame(game: Partial<Game>) {
   let endpoint = "/api/games";
   if (game.name === undefined) {
-    return Promise.reject({ message: "Incomplete request" });
+    return { message: "Incomplete request" };
   }
-  return await fetch(`${PROTOCOL}://${HOST}${endpoint}`, {
+  return fetch(`${PROTOCOL}://${HOST}${endpoint}`, {
     headers: headers,
     method: "POST",
     body: JSON.stringify(game),
-  }).then((response) => {
-    if (response.status === 400) {
-      return Promise.reject({ message: "Duplicate entry" });
-    }
-    return response.json();
-  });
+  })
 }
 
 export async function getGameScores(game: Partial<Game>) {
   let endpoint = "/api/scores";
-  return (await fetch(
+  return fetch(
     `${PROTOCOL}://${HOST}${endpoint}?` +
-      new URLSearchParams({ game: (game?.ID || 1).toString() }),
+    new URLSearchParams({ game: (game?.ID || 1).toString() }),
     { headers: headers }
-  ).then((response) => response.json())) as Score[];
+  )
 }
 
 export async function addScore(score: Partial<Score>) {
   let endpoint = "/api/scores";
-  return await fetch(`${PROTOCOL}://${HOST}${endpoint}`, {
+  return fetch(`${PROTOCOL}://${HOST}${endpoint}`, {
     headers: headers,
     method: "POST",
     body: JSON.stringify({ score: score.score, game: score.gameId, player: score.playerId }),
-  }).then((response) => {
-    if (response.status === 400) {
-      return Promise.reject({ message: "Unable to add score" });
-    }
-    return response.json();
-  });
+  })
 }
